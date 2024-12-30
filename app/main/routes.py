@@ -1,3 +1,4 @@
+import re
 from flask import render_template, request, redirect, url_for, flash
 from app.main import main
 from app.models import db, Person
@@ -25,6 +26,12 @@ def register():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
+        
+        #Check password strength
+        password_pattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$'
+        if not re.match(password_pattern, password):
+            flash('Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.', 'danger')
+            return redirect(url_for('main.register'))
 
         if password != confirm_password:
             flash('Passwords do not match.', 'danger')
