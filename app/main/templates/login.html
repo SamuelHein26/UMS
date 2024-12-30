@@ -2,6 +2,23 @@
 
 {% block content %}
 <div class="text-center">
-    <h1>Welcome to Login Section</h1>
+    <div class="container d-flex justify-content-center align-items-center p-4">
+        <div class="card p-4 shadow" style="width: 25rem;">
+            <h3 class="text-center mb-4">Login</h3>
+            <p style="font-size: 20px;">Have an account?</p>
+            <form method="POST" action="{{ url_for('main.login') }}">
+                <div class="mb-4">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-4">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <p class="text-center mt-3">
+                Don't have an account? <a href="{{ url_for('main.register') }}">Register here</a>.
+            </p>
+        </div>
+    </div>
 </div>
 {% endblock %}
