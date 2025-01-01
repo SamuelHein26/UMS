@@ -1,5 +1,5 @@
 import re
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from app.main import main
 from app.models import db, Person
 
@@ -15,9 +15,45 @@ def about():
 def courses():
     return render_template('courses.html')
 
+@main.route('/enroll')
+def enroll():
+    return render_template('enroll.html')
+
 @main.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        # Get form data
+        email = request.form['email']
+        password = request.form['password']
+
+        # Query the user from the database
+        user = Person.query.filter_by(email=email).first()
+
+        # Check if user exists and password is correct
+        if user and user.check_password(password):
+            # Store user info in session
+            session['user_id'] = user.person_id
+            session['user_role'] = user.role
+
+            # Redirect based on role
+            if user.role == 'Admin':
+                flash('Welcome, Admin!', 'success')
+                return redirect(url_for('admin.dashboard'))
+            elif user.role == 'Professor':
+                flash('Welcome, Professor!', 'success')
+                return redirect(url_for('professor.dashboard'))
+            elif user.role == 'Student':
+                flash('Welcome, Student!', 'success')
+                return redirect(url_for('student.dashboard'))
+            else:
+                flash('Welcome!', 'success')
+                return redirect(url_for('main.index'))
+        else:
+            flash('Invalid email or password.', 'danger')
+            return redirect(url_for('main.login'))
+        
     return render_template('login.html')
+
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -54,5 +90,14 @@ def register():
             flash('An error occurred while creating account.', 'danger')
             return redirect(url_for('main.register'))
         
-        
     return render_template('register.html')
+
+@main.route('/logout')
+def logout():
+    session.clear()  # Clear all session data
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('main.login'))
+
+@main.route('/profile')
+def profile():
+    return render_template('profile.html')

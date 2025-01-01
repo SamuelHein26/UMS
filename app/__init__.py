@@ -1,17 +1,27 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+# Initialize SQLAlchemy globally
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+
+    # Load configuration settings
     app.config.from_object('config.Config')
     
-    #Database connection
+    # Initialize the database connection
     db.init_app(app)
 
-    # Register the main Blueprint
-    from app.main.routes import main
-    app.register_blueprint(main)
-
+    # Import and register blueprints
+    from app.main import main
+    from app.admin import admin
+    from app.professor import professor
+    from app.student import student
+    
+    app.register_blueprint(main, url_prefix='/') 
+    app.register_blueprint(admin, url_prefix='/admin')
+    app.register_blueprint(professor, url_prefix='/professor') 
+    app.register_blueprint(student, url_prefix='/student') 
+      
     return app
