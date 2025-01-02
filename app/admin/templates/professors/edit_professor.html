@@ -1,0 +1,37 @@
+{% extends 'adminbase.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Edit Professor</h1>
+    <form action="{{ url_for('admin.edit_professor', profID=professor.profID) }}" method="POST">
+        <div class="mb-3">
+            <label for="profID" class="form-label">Professor ID</label>
+            <input type="text" class="form-control" id="profID" name="profID" value="{{ professor.profID }}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ professor.person.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="department_id" class="form-label">Department</label>
+            <select class="form-select" id="department_id" name="department_id" required>
+                {% for department in departments %}
+                    <option value="{{ department.departmentID }}" {% if professor.department_id == department.departmentID %}selected{% endif %}>
+                        {{ department.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ professor.person.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone_no" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phone_no" name="phone_no" value="{{ professor.person.phone_no }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('admin.view_professors') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

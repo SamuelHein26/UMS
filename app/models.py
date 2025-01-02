@@ -63,6 +63,8 @@ class Professor(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('Person.person_id', ondelete='CASCADE'), nullable=False)
     profID = db.Column(db.String(20), primary_key=True, unique=True, nullable=False)
     department_id = db.Column(db.String(20), db.ForeignKey('Department.departmentID', ondelete='CASCADE'), nullable=False)
+    person = db.relationship('Person', backref='professor', lazy=True)
+    department = db.relationship('Department', backref='professors', lazy=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

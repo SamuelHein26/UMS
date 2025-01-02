@@ -1,0 +1,32 @@
+{% extends 'adminbase.html' %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 30rem;">
+        <div class="container mt-2">
+            <h1 class="mb-4">Add New Professor</h1>
+            <form action="{{ url_for('admin.add_professor') }}" method="POST">
+                <!-- Person ID -->
+                <div class="mb-3">
+                    <label for="person_id" class="form-label">Person ID</label>
+                    <input type="number" class="form-control" id="person_id" name="person_id" placeholder="Enter Person ID" required>
+                </div>
+
+                <!-- Professor ID -->
+                <div class="mb-3">
+                    <label for="profID" class="form-label">Professor ID</label>
+                    <input type="text" class="form-control" id="profID" name="profID" placeholder="Enter Professor ID" required>
+                </div>
+
+                <!-- Department ID -->
+                <div class="mb-3">
+                    <label for="department_id" class="form-label">Department ID</label>
+                    <input type="text" class="form-control" id="department_id" name="department_id" placeholder="Enter Department ID" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Professor</button>
+                <a href="{{ url_for('admin.view_professors') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
