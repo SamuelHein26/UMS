@@ -97,7 +97,8 @@ class Course(db.Model):
     __tablename__ = 'Course'
     courseID = db.Column(db.String(20), primary_key=True)
     courseName = db.Column(db.String(100), nullable=False)
-    departmentID = db.Column(db.String(20), db.ForeignKey('Department.departmentID', ondelete='CASCADE'), nullable=False)
+    departmentID = db.Column(db.String(20), db.ForeignKey('Department.departmentID'), nullable=False)
+    department = db.relationship('Department', backref='courses', lazy=True)
     duration = db.Column(db.String(50), nullable=True)
     description = db.Column(db.Text, nullable=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)

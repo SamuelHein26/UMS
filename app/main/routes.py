@@ -1,7 +1,7 @@
 import re
 from flask import render_template, request, redirect, url_for, flash, session
 from app.main import main
-from app.models import db, Person
+from app.models import db, Person, Professor, Student
 
 @main.route('/')
 def index():
@@ -100,4 +100,29 @@ def logout():
 
 @main.route('/profile')
 def profile():
-    return render_template('profile.html')
+    # Fetch the currently logged-in user
+    user_id = session.get('user_id')
+    user = Person.query.get(user_id)
+
+    if not user:
+        flash('User not found!', 'danger')
+        return redirect(url_for('main.login'))
+
+    # Prepare role-specific data
+    role_specific_data = {}
+    if user.role == 'Professor':
+        professor = Professor.query.filter_by(person_id=user.person_id).first()
+        role_specific_data['professor'] = professor
+    elif user.role == 'Student':
+        student = Student.query.filter_by(person_id=user.person_id).first()
+        role_specific_data['student'] = student
+    elif user.role == 'Admin':
+        role_specific_data['admin'] = True  # No additional data for admin
+    elif user.role == 'User':
+        role_specific_data['user'] = True  # Default user data
+
+    return render_template('profile.html', user=user, role_data=role_specific_data)
+
+@main.route('/edit_profile')
+def edit_profile():
+    return render_template('edit_profile.html')

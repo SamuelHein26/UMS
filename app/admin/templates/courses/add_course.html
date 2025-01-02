@@ -1,0 +1,49 @@
+{% extends 'adminbase.html' %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 40rem;">
+        <div class="container mt-2">
+            <h1 class="mb-4 text-center">Add New Course</h1>
+            <form action="{{ url_for('admin.add_course') }}" method="POST">
+                <!-- Course ID -->
+                <div class="mb-3">
+                    <label for="courseID" class="form-label">Course ID</label>
+                    <input type="text" class="form-control" id="courseID" name="courseID" placeholder="Enter Course ID" required>
+                </div>
+
+                <!-- Course Name -->
+                <div class="mb-3">
+                    <label for="courseName" class="form-label">Course Name</label>
+                    <input type="text" class="form-control" id="courseName" name="courseName" placeholder="Enter Course Name" required>
+                </div>
+
+                <!-- Department -->
+                <div class="mb-3">
+                    <label for="departmentID" class="form-label">Department</label>
+                    <select class="form-select" id="departmentID" name="departmentID" required>
+                        <option value="" disabled selected>Select Department</option>
+                        {% for department in departments %}
+                            <option value="{{ department.departmentID }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Duration -->
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Duration</label>
+                    <input type="text" class="form-control" id="duration" name="duration" placeholder="Enter Duration (e.g., 6 months)" required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter Course Description"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Add Course</button>
+                <a href="{{ url_for('admin.view_courses') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

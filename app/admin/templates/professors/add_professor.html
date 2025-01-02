@@ -5,22 +5,27 @@
         <div class="container mt-2">
             <h1 class="mb-4">Add New Professor</h1>
             <form action="{{ url_for('admin.add_professor') }}" method="POST">
-                <!-- Person ID -->
                 <div class="mb-3">
-                    <label for="person_id" class="form-label">Person ID</label>
-                    <input type="number" class="form-control" id="person_id" name="person_id" placeholder="Enter Person ID" required>
+                    <label for="person_id" class="form-label">Person</label>
+                    <select class="form-select" id="person_id" name="person_id" required>
+                        <option value="" disabled selected>Select a Person</option>
+                        {% for person in available_persons %}
+                            <option value="{{ person.person_id }}">{{ person.name }} (ID: {{ person.person_id }})</option>
+                        {% endfor %}
+                    </select>
                 </div>
-
-                <!-- Professor ID -->
                 <div class="mb-3">
                     <label for="profID" class="form-label">Professor ID</label>
                     <input type="text" class="form-control" id="profID" name="profID" placeholder="Enter Professor ID" required>
                 </div>
-
-                <!-- Department ID -->
                 <div class="mb-3">
-                    <label for="department_id" class="form-label">Department ID</label>
-                    <input type="text" class="form-control" id="department_id" name="department_id" placeholder="Enter Department ID" required>
+                    <label for="department_id" class="form-label">Department</label>
+                    <select class="form-select" id="department_id" name="department_id" required>
+                        <option value="" disabled selected>Select Department</option>
+                        {% for department in departments %}
+                            <option value="{{ department.departmentID }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Add Professor</button>

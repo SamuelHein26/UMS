@@ -17,6 +17,7 @@ def admin_required(f):
 def dashboard():
     return render_template('dashboard.html')
 
+#################################################################################################
 # View Routes
 @admin.route('/students')
 @admin_required
@@ -47,6 +48,8 @@ def view_departments():
 def view_users():
     users = Person.query.all()
     return render_template('users/view_users.html', users=users)
+
+#################################################################################################
 
 # Add Routes
 @admin.route('/students/add', methods=['GET', 'POST'])
@@ -99,7 +102,11 @@ def add_professor():
 
         # Add the new professor
         new_professor = Professor(person_id=person_id, profID=profID, department_id=department_id)
+
         try:
+            # Update the person's role to 'Professor'
+            person.role = 'Professor'
+            
             db.session.add(new_professor)
             db.session.commit()
             flash('Professor added successfully!', 'success')
@@ -111,26 +118,63 @@ def add_professor():
 
     # Fetch departments for the form
     departments = Department.query.all()
-    return render_template('professors/add_professor.html', departments=departments)
+    
+        # Fetch persons who are not already professors and have the 'User' role
+    available_persons = Person.query.filter(
+        ~Person.person_id.in_(db.session.query(Professor.person_id)),
+        Person.role == 'User'
+    ).all()
+
+    return render_template(
+        'professors/add_professor.html',
+        departments=departments,
+        available_persons=available_persons
+    )
 
 
 @admin.route('/courses/add', methods=['GET', 'POST'])
 @admin_required
 def add_course():
     if request.method == 'POST':
-        courseID = request.form['courseID']
-        courseName = request.form['courseName']
-        departmentID = request.form['departmentID']
-        duration = request.form['duration']
-        description = request.form['description']
+        courseID = request.form.get('courseID')
+        courseName = request.form.get('courseName')
+        departmentID = request.form.get('departmentID')
+        duration = request.form.get('duration')
+        description = request.form.get('description')
 
-        new_course = Course(courseID=courseID, courseName=courseName, departmentID=departmentID, duration=duration, description=description)
-        db.session.add(new_course)
-        db.session.commit()
-        flash('Course added successfully!', 'success')
-        return redirect(url_for('admin.view_courses'))
+        # Validate unique course ID
+        existing_course = Course.query.filter_by(courseID=courseID).first()
+        if existing_course:
+            flash('Course ID already exists. Please use a unique ID.', 'danger')
+            return redirect(url_for('admin.add_course'))
 
-    return render_template('courses/add_course.html')
+        # Validate department
+        department = Department.query.get(departmentID)
+        if not department:
+            flash('Invalid department ID. No such department exists.', 'danger')
+            return redirect(url_for('admin.add_course'))
+
+        # Add the new course
+        new_course = Course(
+            courseID=courseID,
+            courseName=courseName,
+            departmentID=departmentID,
+            duration=duration,
+            description=description
+        )
+        try:
+            db.session.add(new_course)
+            db.session.commit()
+            flash('Course added successfully!', 'success')
+            return redirect(url_for('admin.view_courses'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while adding the course. Please try again.', 'danger')
+            return redirect(url_for('admin.add_course'))
+
+    departments = Department.query.all()  # Fetch departments for the dropdown
+    return render_template('courses/add_course.html', departments=departments)
+
 
 @admin.route('/departments/add', methods=['GET', 'POST'])
 @admin_required
@@ -148,6 +192,8 @@ def add_department():
         return redirect(url_for('admin.view_departments'))
 
     return render_template('departments/add_department.html')
+
+#################################################################################################
 
 # Edit Routes
 @admin.route('/students/edit/<string:studID>', methods=['GET', 'POST'])
@@ -251,6 +297,8 @@ def edit_user(person_id):
 
     return render_template('users/edit_user.html', user=user)
 
+#################################################################################################
+
 # Delete Routes
 @admin.route('/students/delete/<string:studID>', methods=['POST'])
 @admin_required
@@ -288,11 +336,6 @@ def delete_department(departmentID):
     flash('Department deleted successfully!', 'success')
     return redirect(url_for('admin.view_departments'))
 
-@admin.route('/aprofile')
-@admin_required
-def profile():
-    return render_template('aprofile.html')
-
 @admin.route('/users/delete/<int:person_id>', methods=['POST'])
 @admin_required
 def delete_user(person_id):
@@ -309,3 +352,5 @@ def delete_user(person_id):
     except Exception as e:
         flash('An error occurred while deleting the user.', 'danger')
         return redirect(url_for('admin.view_users'))
+
+#################################################################################################
