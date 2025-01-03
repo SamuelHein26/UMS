@@ -1,7 +1,7 @@
 import re
 from flask import render_template, request, redirect, url_for, flash, session
 from app.main import main
-from app.models import db, Person, Professor, Student
+from app.models import db, Person, Professor, Student, Address
 
 @main.route('/')
 def index():
@@ -108,6 +108,9 @@ def profile():
         flash('User not found!', 'danger')
         return redirect(url_for('main.login'))
 
+    # Fetch address details
+    address = Address.query.filter_by(person_id=user.person_id).first()
+
     # Prepare role-specific data
     role_specific_data = {}
     if user.role == 'Professor':
@@ -117,12 +120,58 @@ def profile():
         student = Student.query.filter_by(person_id=user.person_id).first()
         role_specific_data['student'] = student
     elif user.role == 'Admin':
-        role_specific_data['admin'] = True  # No additional data for admin
-    elif user.role == 'User':
-        role_specific_data['user'] = True  # Default user data
+        role_specific_data['admin'] = True
 
-    return render_template('profile.html', user=user, role_data=role_specific_data)
+    return render_template(
+        'profile.html',
+        user=user,
+        address=address,
+        role_data=role_specific_data
+    )
 
-@main.route('/edit_profile')
+@main.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
-    return render_template('edit_profile.html')
+    user_id = session.get('user_id')
+    user = Person.query.get(user_id)
+    address = Address.query.filter_by(person_id=user_id).first()
+
+    if request.method == 'POST':
+        # Update user fields
+        user.name = request.form['name']
+        user.email = request.form['email']
+        user.phone_no = request.form.get('phone_no')
+        user.gender = request.form.get('gender')
+
+        # Update or create address
+        if not address:
+            address = Address(person_id=user_id)
+            db.session.add(address)
+
+        address.street = request.form.get('street')
+        address.city = request.form.get('city')
+        address.state = request.form.get('state')
+        address.postal_code = request.form.get('postal_code')
+        address.country = request.form.get('country')
+
+        try:
+            db.session.commit()
+            flash('Profile updated successfully!', 'success')
+            return redirect(url_for('main.profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while updating your profile.', 'danger')
+
+    return render_template('edit_profile.html', user=user, address=address)
+
+@main.route('/redirect_back')
+def redirect_back():
+    role = session.get('user_role')
+
+    if role == 'Admin':
+        return redirect(url_for('admin.dashboard'))
+    elif role == 'Professor':
+        return redirect(url_for('professor.dashboard'))
+    elif role == 'Student':
+        return redirect(url_for('student.dashboard'))
+    else:
+        return redirect(url_for('main.index'))

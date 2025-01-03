@@ -234,20 +234,31 @@ def edit_professor(profID):
     return render_template('professors/edit_professor.html', professor=professor, departments=departments)
 
 
-@admin.route('/courses/edit/<string:courseID>', methods=['GET', 'POST'])
+@   admin.route('/courses/edit/<string:courseID>', methods=['GET', 'POST'])
 @admin_required
 def edit_course(courseID):
     course = Course.query.get(courseID)
+    if not course:
+        flash('Course not found!', 'danger')
+        return redirect(url_for('admin.view_courses'))
+
+    departments = Department.query.all()
+
     if request.method == 'POST':
         course.courseName = request.form['courseName']
         course.departmentID = request.form['departmentID']
         course.duration = request.form['duration']
         course.description = request.form['description']
-        db.session.commit()
-        flash('Course updated successfully!', 'success')
-        return redirect(url_for('admin.view_courses'))
 
-    return render_template('courses/edit_course.html', course=course)
+        try:
+            db.session.commit()
+            flash('Course updated successfully!', 'success')
+            return redirect(url_for('admin.view_courses'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while updating the course. Please try again.', 'danger')
+
+    return render_template('courses/edit_course.html', course=course, departments=departments)
 
 @admin.route('/departments/edit/<string:departmentID>', methods=['GET', 'POST'])
 @admin_required
