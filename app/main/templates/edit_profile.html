@@ -28,6 +28,10 @@
                             <input type="text" class="form-control" id="phone_no" name="phone_no" value="{{ user.phone_no }}">
                         </div>
                         <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" value="{{ user.age }}">
+                        </div>
+                        <div class="mb-3">
                             <label for="gender" class="form-label">Gender</label>
                             <select class="form-select" id="gender" name="gender">
                                 <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>

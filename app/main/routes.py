@@ -140,6 +140,7 @@ def edit_profile():
         user.name = request.form['name']
         user.email = request.form['email']
         user.phone_no = request.form.get('phone_no')
+        user.age = request.form.get('age')
         user.gender = request.form.get('gender')
 
         # Update or create address
