@@ -1,4 +1,4 @@
-{% extends 'adminbase.html' %}
+{% extends 'base.html' %}
 {% block content %}
 <div class="container mt-3">
     <h1 class="mb-4 text-center">Courses</h1>
@@ -11,6 +11,7 @@
                 <th>Department</th>
                 <th>Duration</th>
                 <th>Description</th>
+                <th>Course Fee</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
                 <td>{{ course.department.name }}</td>
                 <td>{{ course.duration }}</td>
                 <td>{{ course.description | truncate(50) }}</td>
+                <td>{{ course.courseFee }}</td>
                 <td>
                     <a href="{{ url_for('admin.edit_course', courseID=course.courseID) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ url_for('admin.delete_course', courseID=course.courseID) }}" method="POST" style="display:inline;">

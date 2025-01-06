@@ -98,12 +98,14 @@ class Course(db.Model):
     courseID = db.Column(db.String(20), primary_key=True)
     courseName = db.Column(db.String(100), nullable=False)
     departmentID = db.Column(db.String(20), db.ForeignKey('Department.departmentID'), nullable=False)
-    department = db.relationship('Department', backref='courses', lazy=True)
     duration = db.Column(db.String(50), nullable=True)
     description = db.Column(db.Text, nullable=True)
+    courseFee = db.Column(db.DECIMAL(10, 2), default=0.00) 
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Relationships
+    department = db.relationship("Department", backref="courses")
 
 # Enrollment Table
 class Enrollment(db.Model):
@@ -171,3 +173,4 @@ class Grade(db.Model):
     feedback = db.Column(db.Text, nullable=True)
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+

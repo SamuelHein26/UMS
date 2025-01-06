@@ -1,4 +1,4 @@
-{% extends 'adminbase.html' %}
+{% extends 'base.html' %}
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center p-4">
     <div class="card p-4 shadow" style="width: 40rem;">
@@ -10,14 +10,10 @@
                     <label for="courseID" class="form-label">Course ID</label>
                     <input type="text" class="form-control" id="courseID" name="courseID" placeholder="Enter Course ID" required>
                 </div>
-
-                <!-- Course Name -->
                 <div class="mb-3">
                     <label for="courseName" class="form-label">Course Name</label>
                     <input type="text" class="form-control" id="courseName" name="courseName" placeholder="Enter Course Name" required>
                 </div>
-
-                <!-- Department -->
                 <div class="mb-3">
                     <label for="departmentID" class="form-label">Department</label>
                     <select class="form-select" id="departmentID" name="departmentID" required>
@@ -27,14 +23,14 @@
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- Duration -->
                 <div class="mb-3">
                     <label for="duration" class="form-label">Duration</label>
                     <input type="text" class="form-control" id="duration" name="duration" placeholder="Enter Duration (e.g., 6 months)" required>
                 </div>
-
-                <!-- Description -->
+                <div class="mb-3">
+                    <label for="courseFee" class="form-label">Course Fee</label>
+                    <input type="number" step="0.01" class="form-control" id="courseFee" name="courseFee" placeholder="Enter Course Fee (e.g., 200.00)" required>
+                </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter Course Description"></textarea>

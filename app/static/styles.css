@@ -22,10 +22,9 @@ body::-webkit-scrollbar{
     width: 0.25rem;
 }
 
-
 body {
     font-family: Arial, sans-serif;
-    background-color: #f3f3f3;
+    background-color: rgb(165, 229, 138);
     color: #333;
     margin: 0;
     padding: 0;

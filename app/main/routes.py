@@ -1,7 +1,8 @@
 import re
+from datetime import datetime, timedelta
 from flask import render_template, request, redirect, url_for, flash, session
 from app.main import main
-from app.models import db, Person, Professor, Student, Address
+from app.models import db, Person, Professor, Student, Address, Course, Enrollment, Fee
 
 @main.route('/')
 def index():
@@ -11,13 +12,116 @@ def index():
 def about():
     return render_template('about.html')
 
-@main.route('/courses')
+@main.route('/courses', methods=['GET'])
 def courses():
-    return render_template('courses.html')
+    courses = Course.query.all()
+    return render_template('courses.html', courses=courses)
 
-@main.route('/enroll')
-def enroll():
-    return render_template('enroll.html')
+@main.route('/enroll/<string:courseID>', methods=['GET', 'POST'])
+def enroll(courseID):
+    if 'user_id' not in session:
+        flash('You need to be logged in to enroll in a course.', 'warning')
+        return redirect(url_for('main.courses'))
+
+    user_id = session['user_id']
+    user = Person.query.get(user_id)
+
+    if user.role != 'User':
+        flash('You are already a student or have another role!', 'danger')
+        return redirect(url_for('main.courses'))
+
+    course = Course.query.get(courseID)
+    if not course:
+        flash('Course not found!', 'danger')
+        return redirect(url_for('main.courses'))
+
+    # Check if a minimal Student record already exists
+    student = Student.query.filter_by(person_id=user_id).first()
+    if not student:
+        # Create a minimal Student record with only person_id and studID
+        studID = f"STU{user_id}"
+        student = Student(person_id=user_id, studID=studID)
+        db.session.add(student)
+        db.session.commit()  # Commit to ensure the Student record is saved
+
+    if request.method == 'POST':
+        semester = request.form.get('semester')
+
+        # Create Enrollment record
+        enrollment = Enrollment(
+            studID=student.studID,
+            courseID=courseID,
+            status="Pending Payment",
+            enrollmentDate=datetime.utcnow(),
+            semester=semester,
+            paymentStatus=False
+        )
+
+        try:
+            db.session.add(enrollment)
+            db.session.commit()
+            flash(f'Enrollment initiated for {course.courseName}. Please proceed to payment.', 'success')
+            return redirect(url_for('main.payment', enrollmentID=enrollment.enrollmentID))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred during enrollment: {str(e)}', 'danger')
+            return redirect(url_for('main.enroll', courseID=courseID))
+
+    return render_template('enroll.html', course=course, user=user)
+
+
+@main.route('/payment/<int:enrollmentID>', methods=['GET', 'POST'])
+def payment(enrollmentID):
+    if 'user_id' not in session:
+        flash('You need to be logged in to proceed with payment.', 'warning')
+        return redirect(url_for('main.courses'))
+
+    enrollment = Enrollment.query.get(enrollmentID)
+    if not enrollment:
+        flash('Enrollment not found. Please try again.', 'danger')
+        return redirect(url_for('main.courses'))
+
+    if enrollment.paymentStatus:
+        flash('Payment has already been completed for this enrollment.', 'info')
+        return redirect(url_for('student.dashboard'))
+
+    course = Course.query.get(enrollment.courseID)
+    if not course:
+        flash('Course not found. Please contact support.', 'danger')
+        return redirect(url_for('main.courses'))
+
+    if request.method == 'POST':
+        paymentMethod = request.form.get('paymentMethod')
+
+        # Create Fee record
+        fee = Fee(
+            enrollmentID=enrollmentID,
+            amount=course.courseFee,
+            dueDate=datetime.utcnow() + timedelta(days=7),
+            paymentMethod=paymentMethod
+        )
+        enrollment.paymentStatus = True
+        enrollment.status = "Active"
+
+        # Update user role to Student
+        user = Person.query.get(session['user_id'])
+        user.role = 'Student'
+
+        # Update the Student record with additional details
+        student = Student.query.filter_by(person_id=user.person_id).first()
+        student.courses = course.courseName
+
+        try:
+            db.session.add(fee)
+            db.session.commit()
+            flash('Payment successful! You are now enrolled as a student.', 'success')
+            return redirect(url_for('student.dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred during payment: {str(e)}', 'danger')
+            return redirect(url_for('main.payment', enrollmentID=enrollmentID))
+
+    return render_template('payment.html', enrollment=enrollment, course=course)
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():

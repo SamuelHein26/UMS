@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Payment for {{ course.courseName }}</h1>
+    <p><strong>Course Fee:</strong> ${{ course.courseFee }}</p>
+    <p><strong>Department:</strong> {{ course.departmentID }}</p>
+    <p><strong>Duration:</strong> {{ course.duration }}</p>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="paymentMethod" class="form-label">Payment Method</label>
+            <select id="paymentMethod" name="paymentMethod" class="form-select" required>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cash">Cash</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Confirm Payment</button>
+        <a href="{{ url_for('main.courses') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

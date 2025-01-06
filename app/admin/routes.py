@@ -8,7 +8,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if session.get('user_role') != 'Admin': 
             flash('Unauthorized access! Admins only.', 'danger')
-            return redirect(url_for('main.login')) 
+            return redirect(url_for('main.index')) 
         return f(*args, **kwargs)
     return decorated_function
 
@@ -140,6 +140,7 @@ def add_course():
         courseName = request.form.get('courseName')
         departmentID = request.form.get('departmentID')
         duration = request.form.get('duration')
+        courseFee = request.form.get('courseFee')
         description = request.form.get('description')
 
         # Validate unique course ID
@@ -160,6 +161,7 @@ def add_course():
             courseName=courseName,
             departmentID=departmentID,
             duration=duration,
+            courseFee=float(courseFee),
             description=description
         )
         try:
@@ -234,7 +236,7 @@ def edit_professor(profID):
     return render_template('professors/edit_professor.html', professor=professor, departments=departments)
 
 
-@   admin.route('/courses/edit/<string:courseID>', methods=['GET', 'POST'])
+@admin.route('/courses/edit/<string:courseID>', methods=['GET', 'POST'])
 @admin_required
 def edit_course(courseID):
     course = Course.query.get(courseID)
@@ -245,10 +247,12 @@ def edit_course(courseID):
     departments = Department.query.all()
 
     if request.method == 'POST':
-        course.courseName = request.form['courseName']
-        course.departmentID = request.form['departmentID']
-        course.duration = request.form['duration']
-        course.description = request.form['description']
+        # Extract form data
+        course.courseName = request.form.get('courseName')
+        course.departmentID = request.form.get('departmentID')
+        course.duration = request.form.get('duration')
+        course.courseFee = float(request.form.get('courseFee'))
+        course.description = request.form.get('description')
 
         try:
             db.session.commit()
@@ -256,7 +260,8 @@ def edit_course(courseID):
             return redirect(url_for('admin.view_courses'))
         except Exception as e:
             db.session.rollback()
-            flash('An error occurred while updating the course. Please try again.', 'danger')
+            flash(f'Error updating course: {str(e)}', 'danger')
+            return redirect(url_for('courses/admin.edit_course', courseID=courseID))
 
     return render_template('courses/edit_course.html', course=course, departments=departments)
 
