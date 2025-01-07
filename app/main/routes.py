@@ -38,7 +38,6 @@ def enroll(courseID):
     # Check if a minimal Student record already exists
     student = Student.query.filter_by(person_id=user_id).first()
     if not student:
-        # Create a minimal Student record with only person_id and studID
         studID = f"STU{user_id}"
         student = Student(person_id=user_id, studID=studID)
         db.session.add(student)
@@ -114,8 +113,8 @@ def payment(enrollmentID):
         try:
             db.session.add(fee)
             db.session.commit()
-            flash('Payment successful! You are now enrolled as a student.', 'success')
-            return redirect(url_for('student.dashboard'))
+            flash('Payment successful! You are now enrolled as a student. Please Log in again to access student dashboard!', 'success')
+            return redirect(url_for('main.login'))
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred during payment: {str(e)}', 'danger')

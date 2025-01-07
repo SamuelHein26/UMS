@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from functools import wraps
 from app.admin import admin
-from app.models import db, Student, Professor, Course, Department, Person
+from app.models import db, Student, Professor, Course, Department, Person, Fee, Enrollment
 
 def admin_required(f):
     @wraps(f)
@@ -19,10 +19,12 @@ def dashboard():
 
 #################################################################################################
 # View Routes
-@admin.route('/students')
+@admin.route('/students', methods=['GET'])
 @admin_required
 def view_students():
-    students = Student.query.all()
+    students = Student.query.join(Person, Student.person_id == Person.person_id).add_columns(
+        Student.studID, Person.name, Person.email, Person.phone_no, Person.gender, Student.courses
+    ).all()
     return render_template('students/view_students.html', students=students)
 
 @admin.route('/professors')
@@ -42,6 +44,49 @@ def view_courses():
 def view_departments():
     departments = Department.query.all()
     return render_template('departments/view_departments.html', departments=departments)
+
+@admin.route('/payments', methods=['GET'])
+@admin_required
+def view_payment():
+    payments = (
+        Fee.query.join(Enrollment, Fee.enrollmentID == Enrollment.enrollmentID)
+        .join(Student, Enrollment.studID == Student.studID)
+        .join(Course, Enrollment.courseID == Course.courseID)
+        .add_columns(
+            Fee.feeID,
+            Fee.amount,
+            Fee.dueDate,
+            Fee.paymentMethod,
+            Fee.createdAt,
+            Student.studID,
+            Course.courseName,
+            Enrollment.semester,
+            Enrollment.status
+        )
+        .all()
+    )
+    return render_template('payments/view_payments.html', payments=payments)
+
+@admin.route('/enrollments', methods=['GET'])
+@admin_required
+def view_enrollments():
+    enrollments = (
+        Enrollment.query.join(Student, Enrollment.studID == Student.studID)
+        .join(Course, Enrollment.courseID == Course.courseID)
+        .add_columns(
+            Enrollment.enrollmentID,
+            Student.studID,
+            Course.courseName,
+            Enrollment.semester,
+            Enrollment.enrollmentDate,
+            Enrollment.status,
+            Enrollment.paymentStatus,
+            Enrollment.dropDate
+        )
+        .all()
+    )
+    return render_template('enrollments/view_enrollments.html', enrollments=enrollments)
+
 
 @admin.route('/users')
 @admin_required
@@ -201,12 +246,19 @@ def add_department():
 @admin.route('/students/edit/<string:studID>', methods=['GET', 'POST'])
 @admin_required
 def edit_student(studID):
-    student = Student.query.get(studID)
+    student = Student.query.filter_by(studID=studID).first_or_404()
+
     if request.method == 'POST':
-        student.courses = ','.join(request.form.getlist('courses'))
-        db.session.commit()
-        flash('Student updated successfully!', 'success')
-        return redirect(url_for('admin.view_students'))
+        student.courses = request.form.get('courses')
+
+        try:
+            db.session.commit()
+            flash('Student updated successfully!', 'success')
+            return redirect(url_for('admin.view_students'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+            return redirect(url_for('admin.edit_student', studID=studID))
 
     return render_template('students/edit_student.html', student=student)
 
@@ -287,6 +339,31 @@ def edit_department(departmentID):
 
     return render_template('departments/edit_department.html', department=department)
 
+@admin.route('/enrollments/edit/<int:enrollmentID>', methods=['GET', 'POST'])
+@admin_required
+def edit_enrollment(enrollmentID):
+    enrollment = Enrollment.query.get_or_404(enrollmentID)
+    courses = Course.query.all()
+    
+    if request.method == 'POST':
+        enrollment.courseID = request.form['courseID']
+        enrollment.semester = request.form['semester']
+        enrollment.status = request.form['status']
+        enrollment.dropDate = request.form.get('dropDate') or None
+        enrollment.paymentStatus = True if request.form.get('paymentStatus') == 'Paid' else False
+
+        try:
+            db.session.commit()
+            flash('Enrollment updated successfully!', 'success')
+            return redirect(url_for('admin.view_enrollments'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred: {str(e)}', 'danger')
+            return redirect(url_for('admin.edit_enrollment', enrollmentID=enrollmentID))
+
+    return render_template('enrollments/edit_enrollment.html', enrollment=enrollment, courses=courses)
+
+
 @admin.route('/users/edit/<int:person_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_user(person_id):
@@ -351,6 +428,22 @@ def delete_department(departmentID):
     db.session.commit()
     flash('Department deleted successfully!', 'success')
     return redirect(url_for('admin.view_departments'))
+
+@admin.route('/enrollments/delete/<int:enrollmentID>', methods=['POST'])
+@admin_required
+def delete_enrollment(enrollmentID):
+    enrollment = Enrollment.query.get_or_404(enrollmentID)
+
+    try:
+        db.session.delete(enrollment)
+        db.session.commit()
+        flash('Enrollment deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'An error occurred: {str(e)}', 'danger')
+
+    return redirect(url_for('admin.view_enrollments'))
+
 
 @admin.route('/users/delete/<int:person_id>', methods=['POST'])
 @admin_required

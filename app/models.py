@@ -161,6 +161,18 @@ class Exam(db.Model):
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class Submission(db.Model):
+    __tablename__ = 'Submission'
+    submissionID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    examID = db.Column(db.Integer, db.ForeignKey('Exam.examID', ondelete='CASCADE'), nullable=False)
+    studID = db.Column(db.String(20), db.ForeignKey('Student.studID', ondelete='CASCADE'), nullable=False)
+    filePath = db.Column(db.String(255), nullable=False)
+    submittedAt = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.Enum('Submitted', 'Pending', 'Graded'), default='Pending')
+
+    exam = db.relationship('Exam', backref='submissions')
+    student = db.relationship('Student', backref='submissions')
+
 # Grade Table
 class Grade(db.Model):
     __tablename__ = 'Grade'

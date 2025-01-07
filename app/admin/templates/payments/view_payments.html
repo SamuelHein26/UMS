@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">View Payments</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Payment ID</th>
+                <th>Student ID</th>
+                <th>Course Name</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Due Date</th>
+                <th>Payment Date</th>
+                <th>Semester</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.feeID }}</td>
+                <td>{{ payment.studID }}</td>
+                <td>{{ payment.courseName }}</td>
+                <td>${{ "%.2f"|format(payment.amount) }}</td>
+                <td>{{ payment.paymentMethod }}</td>
+                <td>{{ payment.dueDate.strftime('%Y-%m-%d') }}</td>
+                <td>{{ payment.createdAt.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ payment.semester }}</td>
+                <td>{{ payment.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

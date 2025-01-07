@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Exams for Course {{ courseID }}</h1>
+
+    {% if exams %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Exam ID</th>
+                    <th>Type</th>
+                    <th>Date/Deadline</th>
+                    <th>Max Marks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.examID }}</td>
+                    <td>{{ exam.examType }}</td>
+                    <td>{{ exam.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>{{ exam.maxMarks }}</td>
+                    <td>
+                        {% if exam.examType == 'Assignment' %}
+                            <a href="{{ url_for('student.submit_assignment', examID=exam.examID) }}" class="btn btn-primary btn-sm">Submit Assignment</a>
+                        {% else %}
+                            <span class="text-muted">Written Exam</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center">No exams available for this course.</p>
+    {% endif %}
+</div>
+{% endblock %}

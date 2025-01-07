@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Submissions for {{ exam.courseID }}</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Submission ID</th>
+                <th>Student ID</th>
+                <th>Submitted At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.submissionID }}</td>
+                <td>{{ submission.studID }}</td>
+                <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <a href="{{ url_for('professor.download_submission', submissionID=submission.submissionID) }}" class="btn btn-primary btn-sm">Download</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

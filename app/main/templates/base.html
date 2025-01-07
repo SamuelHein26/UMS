@@ -35,12 +35,29 @@
                             <a class="nav-link" href="{{ url_for('admin.view_departments') }}">Departments</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.view_enrollments') }}">Enrollment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.view_payment') }}">Payments</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('admin.view_users') }}">Users</a>
                         </li>   
+                    {% elif session.get('user_role') == 'Professor' %}
+                        <!-- Professor Navigation -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('professor.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('professor.view_courses') }}">Courses</a>
+                        </li>
                     {% elif session.get('user_role') == 'Student' %}
                         <!-- Student Navigation -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('student.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('student.enrolled_courses') }}">Enrolled Courses</a>
                         </li>
                     {% else %}
                         <!-- Default Navigation -->

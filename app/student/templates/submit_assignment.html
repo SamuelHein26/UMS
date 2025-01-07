@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container card p-4 mt-5 w-50">
+    <h1 class="text-center mb-4">Submit Assignment for {{ exam.courseID }}</h1>
+    <br>
+    <p><strong>Assignment Name:</strong> {{ exam.examType }}</p>
+    <p><strong>Deadline:</strong> {{ exam.date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    <p><strong>Maximum Marks:</strong> {{ exam.maxMarks }}</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload Assignment File</label>
+            <input type="file" class="form-control" id="file" name="file" required>
+        </div>
+        <button type="submit" class="btn btn-success">Submit Assignment</button>
+        <a href="{{ url_for('student.view_exams', courseID=exam.courseID) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

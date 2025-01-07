@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">My Enrolled Courses</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Course Name</th>
+                <th>Duration</th>
+                <th>Semester</th>
+                <th>Enrollment Date</th>
+                <th>Status</th>
+                <th>Payment Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+            <tr>
+                <td>{{ enrollment.courseName }}</td>
+                <td>{{ enrollment.duration }}</td>
+                <td>{{ enrollment.semester }}</td>
+                <td>{{ enrollment.enrollmentDate.strftime('%Y-%m-%d') }}</td>
+                <td>{{ enrollment.status }}</td>
+                <td>
+                    {% if enrollment.paymentStatus %}
+                        <span class="badge bg-success">Paid</span>
+                    {% else %}
+                        <span class="badge bg-danger">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if enrollment.status != 'Dropped' %}
+                        <a href="{{ url_for('student.view_exams', courseID=enrollment.courseID) }}" class="btn btn-primary btn-sm">View Exams</a>
+                        <form action="{{ url_for('student.drop_course', enrollmentID=enrollment.enrollmentID) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to drop this course?');">Drop Course</button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">Dropped</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

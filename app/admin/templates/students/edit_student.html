@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 40rem;">
+        <h1 class="text-center mb-4">Edit Student</h1>
+        <form method="POST">
+            <!-- Student ID (readonly) -->
+            <div class="mb-3">
+                <label for="studID" class="form-label">Student ID</label>
+                <input type="text" class="form-control" id="studID" name="studID" value="{{ student.studID }}" readonly>
+            </div>
+
+            <!-- Enrolled Courses -->
+            <div class="mb-3">
+                <label for="courses" class="form-label">Enrolled Courses</label>
+                <textarea class="form-control" id="courses" name="courses" rows="3">{{ student.courses }}</textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Update Student</button>
+            <a href="{{ url_for('admin.view_students') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

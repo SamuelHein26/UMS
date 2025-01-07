@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">View Enrollments</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Enrollment ID</th>
+                <th>Student ID</th>
+                <th>Course Name</th>
+                <th>Semester</th>
+                <th>Enrollment Date</th>
+                <th>Status</th>
+                <th>Payment Status</th>
+                <th>Drop Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+            <tr>
+                <td>{{ enrollment.enrollmentID }}</td>
+                <td>{{ enrollment.studID }}</td>
+                <td>{{ enrollment.courseName }}</td>
+                <td>{{ enrollment.semester }}</td>
+                <td>{{ enrollment.enrollmentDate.strftime('%Y-%m-%d') }}</td>
+                <td>{{ enrollment.status }}</td>
+                <td>
+                    {% if enrollment.paymentStatus %}
+                        <span class="badge bg-success">Paid</span>
+                    {% else %}
+                        <span class="badge bg-danger">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if enrollment.dropDate %}
+                        {{ enrollment.dropDate.strftime('%Y-%m-%d') }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Edit Button -->
+                    <a href="{{ url_for('admin.edit_enrollment', enrollmentID=enrollment.enrollmentID) }}" class="btn btn-primary btn-sm">Edit</a>
+                    
+                    <!-- Delete Button -->
+                    <form action="{{ url_for('admin.delete_enrollment', enrollmentID=enrollment.enrollmentID) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this enrollment?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

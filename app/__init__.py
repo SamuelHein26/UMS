@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,6 +10,10 @@ def create_app():
 
     # Load configuration settings
     app.config.from_object('config.Config')
+    
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'submissions')
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     # Initialize the database connection
     db.init_app(app)
