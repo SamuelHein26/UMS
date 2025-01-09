@@ -1,47 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Create Exam/Assignment for {{ course.courseName }}</h1>
-    <form method="POST">
-        <!-- Exam Type -->
-        <div class="mb-3">
-            <label for="examType" class="form-label">Exam Type</label>
-            <select id="examType" name="examType" class="form-select" required>
-                <option value="Written">Written Exam</option>
-                <option value="Assignment">Assignment</option>
-            </select>
-        </div>
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 50rem;">
+        <div class="container mt-2">
+            <h1 class="text-center mb-4">Create Exam/Assignment for {{ course.courseName }}</h1>
+            <form method="POST">
+                <!-- Exam Type -->
+                <div class="mb-3">
+                    <label for="examType" class="form-label">Exam Type</label>
+                    <select id="examType" name="examType" class="form-select" required>
+                        <option value="Written">Written Exam</option>
+                        <option value="Assignment">Assignment</option>
+                    </select>
+                </div>
 
-        <!-- Date or Deadline -->
-        <div class="mb-3">
-            <label for="date" class="form-label">Date/Deadline</label>
-            <input type="datetime-local" class="form-control" id="date" name="date" required>
-        </div>
+                <!-- Date or Deadline -->
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date/Deadline</label>
+                    <input type="datetime-local" class="form-control" id="date" name="date" required>
+                </div>
 
-        <!-- Maximum Marks -->
-        <div class="mb-3">
-            <label for="maxMarks" class="form-label">Maximum Marks</label>
-            <input type="number" class="form-control" id="maxMarks" name="maxMarks" required>
-        </div>
+                <!-- Maximum Marks -->
+                <div class="mb-3">
+                    <label for="maxMarks" class="form-label">Maximum Marks</label>
+                    <input type="number" class="form-control" id="maxMarks" name="maxMarks" required>
+                </div>
 
-        <!-- Location (for Written Exams only) -->
-        <div class="mb-3" id="locationField">
-            <label for="location" class="form-label">Location</label>
-            <input type="text" class="form-control" id="location" name="location" placeholder="Enter location">
-        </div>
+                <!-- Location (for Written Exams only) -->
+                <div class="mb-3" id="locationField">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="Enter location">
+                </div>
 
-        <!-- Duration (for Written Exams only) -->
-        <div class="mb-3" id="durationField">
-            <label for="duration" class="form-label">Duration (in minutes)</label>
-            <input type="number" class="form-control" id="duration" name="duration" placeholder="Enter duration">
-        </div>
+                <!-- Duration (for Written Exams only) -->
+                <div class="mb-3" id="durationField">
+                    <label for="duration" class="form-label">Duration (in minutes)</label>
+                    <input type="number" class="form-control" id="duration" name="duration" placeholder="Enter duration">
+                </div>
 
-        <button type="submit" class="btn btn-primary w-100">Create</button>
-        <a href="{{ url_for('professor.view_course_exams', courseID=course.courseID) }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
-    </form>
+                <button type="submit" class="btn btn-primary w-100">Create</button>
+                <a href="{{ url_for('professor.view_course_exams', courseID=course.courseID) }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>
 </div>
-
 <script>
     // Hide location and duration fields if the selected exam type is "Assignment"
     document.getElementById('examType').addEventListener('change', function () {

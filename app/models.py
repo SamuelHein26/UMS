@@ -134,7 +134,10 @@ class Attendance(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-
+    student = db.relationship('Student', backref='attendance')
+    professor = db.relationship('Professor', backref='attendance')
+    course = db.relationship('Course', backref='attendance')
+    
 # Fee Table
 class Fee(db.Model):
     __tablename__ = 'Fee'
@@ -160,19 +163,22 @@ class Exam(db.Model):
     createdAt = db.Column(db.DateTime, default=datetime.utcnow)
     updatedAt = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Add this relationship
+    course = db.relationship('Course', backref='exams')
+
 
 class Submission(db.Model):
     __tablename__ = 'Submission'
     submissionID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     examID = db.Column(db.Integer, db.ForeignKey('Exam.examID', ondelete='CASCADE'), nullable=False)
     studID = db.Column(db.String(20), db.ForeignKey('Student.studID', ondelete='CASCADE'), nullable=False)
-    filePath = db.Column(db.String(255), nullable=False)
-    submittedAt = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.Enum('Submitted', 'Pending', 'Graded'), default='Pending')
+    filepath = db.Column(db.String(255), nullable=False)  # Ensure this field exists
+    submittedat = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Relationships
     exam = db.relationship('Exam', backref='submissions')
     student = db.relationship('Student', backref='submissions')
-
+    
 # Grade Table
 class Grade(db.Model):
     __tablename__ = 'Grade'

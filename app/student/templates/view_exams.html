@@ -24,7 +24,8 @@
                     <td>{{ exam.maxMarks }}</td>
                     <td>
                         {% if exam.examType == 'Assignment' %}
-                            <a href="{{ url_for('student.submit_assignment', examID=exam.examID) }}" class="btn btn-primary btn-sm">Submit Assignment</a>
+                        <a href="{{ url_for('student.view_marks', examID=exam.examID) }}" class="btn btn-info btn-sm">See Marks</a>
+                        <a href="{{ url_for('student.submit_assignment', examID=exam.examID) }}" class="btn btn-primary btn-sm">Submit Assignment</a>
                         {% else %}
                             <span class="text-muted">Written Exam</span>
                         {% endif %}
@@ -36,5 +37,6 @@
     {% else %}
         <p class="text-center">No exams available for this course.</p>
     {% endif %}
+    <a href="{{ url_for('student.enrolled_courses') }}" class="btn btn-secondary mt-3">Back to Courses</a>
 </div>
 {% endblock %}

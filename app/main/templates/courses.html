@@ -1,35 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Available Courses</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Course Name</th>
-                <th>Department</th>
-                <th>Duration</th>
-                <th>Description</th>
-                <th>Course Fee</th>
-                <th>Enroll</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in courses %}
-            <tr>
-                <td>{{ course.courseName }}</td>
-                <td>{{ course.departmentID }}</td>
-                <td>{{ course.duration }}</td>
-                <td>{{ course.description }}</td>
-                <td>${{ course.courseFee }}</td>
-                <td>
-                    <a href="{{ url_for('main.enroll', courseID=course.courseID) }}" class="btn btn-primary">
-                        Enroll
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 80rem;">
+        <div class="container mt-2">
+            <h1 class="text-center mb-4">Available Courses</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Department</th>
+                        <th>Duration</th>
+                        <th>Description</th>
+                        <th>Course Fee</th>
+                        <th>Enroll</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.courseName }}</td>
+                        <td>{{ course.departmentID }}</td>
+                        <td>{{ course.duration }}</td>
+                        <td>{{ course.description }}</td>
+                        <td>${{ course.courseFee }}</td>
+                        <td>
+                            <a href="{{ url_for('main.enroll', courseID=course.courseID) }}" class="btn btn-primary">
+                                Enroll
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

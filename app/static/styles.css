@@ -24,9 +24,16 @@ body::-webkit-scrollbar{
 
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(165, 229, 138);
-    color: #333;
+    background-color: rgb(174, 174, 174);
+    color: #272727;
     margin: 0;
     padding: 0;
+}
+
+.navbar{
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    z-index: 1000;
 }
 

@@ -4,14 +4,14 @@ from functools import wraps
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from app.student import student
-from app.models import db, Student, Enrollment, Course, Exam, Submission
+from app.models import db, Student, Enrollment, Course, Exam, Submission, Grade, Attendance
 
 def student_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('user_role') != 'Student': 
             flash('Unauthorized access! Student only.', 'danger')
-            return redirect(url_for('main.login')) 
+            return redirect(url_for('main.profile')) 
         return f(*args, **kwargs)
     return decorated_function
 
@@ -105,17 +105,17 @@ def submit_assignment(examID):
 
         file = request.files['file']
         filename = secure_filename(f"{student.studID}_{examID}_{file.filename}")
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 
-        print(f"Saving file to: {file_path}")  # Debugging output
+        print(f"Saving file to: {filepath}")  # Debugging output
 
         try:
-            file.save(file_path)
+            file.save(filepath)
             new_submission = Submission(
                 examID=examID,
                 studID=student.studID,
-                file_path=file_path,
-                submitted_at=datetime.utcnow()
+                filepath=filepath,
+                submittedat=datetime.utcnow()
             )
             db.session.add(new_submission)
             db.session.commit()
@@ -126,4 +126,52 @@ def submit_assignment(examID):
             flash(f'An error occurred while submitting the assignment: {str(e)}', 'danger')
 
     return render_template('submit_assignment.html', exam=exam)
+
+@student.route('/exams/<int:examID>/marks', methods=['GET'])
+@student_required
+def view_marks(examID):
+    # Get the current student based on the logged-in user
+    student = Student.query.filter_by(person_id=session['user_id']).first_or_404()
+
+    # Query grade for the student and include course details
+    grade = (
+        db.session.query(Grade, Exam, Course)
+        .join(Exam, Grade.examID == Exam.examID)
+        .join(Course, Exam.courseID == Course.courseID)
+        .filter(Grade.studID == student.studID, Exam.examID == examID)
+        .first()
+    )
+
+    if not grade:
+        flash('No marks available for this exam.', 'info')
+        return redirect(url_for('student.enrolled_courses'))
+
+    return render_template('see_marks.html', grade=grade)
+
+@student.route('/courses/<string:courseID>/attendance', methods=['GET'])
+@student_required
+def view_attendance(courseID):
+    # Get the current student based on the logged-in user
+    student = Student.query.filter_by(person_id=session['user_id']).first_or_404()
+
+    # Query attendance records for the student in the given course
+    attendance_records = Attendance.query.filter_by(studID=student.studID, courseID=courseID).all()
+
+    if not attendance_records:
+        flash('No attendance records found for this course.', 'info')
+        return redirect(url_for('student.enrolled_courses'))
+
+    # Calculate attendance statistics
+    total_classes = len(attendance_records)
+    attended_classes = sum(record.status for record in attendance_records)
+    attendance_percentage = (attended_classes / total_classes) * 100 if total_classes > 0 else 0
+
+    return render_template(
+        'view_attendance.html',
+        attendance_records=attendance_records,
+        courseID=courseID,
+        attended_classes=attended_classes,
+        total_classes=total_classes,
+        attendance_percentage=attendance_percentage
+    )
 

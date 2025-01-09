@@ -33,6 +33,7 @@
                 <td>
                     {% if enrollment.status != 'Dropped' %}
                         <a href="{{ url_for('student.view_exams', courseID=enrollment.courseID) }}" class="btn btn-primary btn-sm">View Exams</a>
+                        <a href="{{ url_for('student.view_attendance', courseID=enrollment.courseID) }}" class="btn btn-info btn-sm">View Attendance</a>
                         <form action="{{ url_for('student.drop_course', enrollmentID=enrollment.enrollmentID) }}" method="POST" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to drop this course?');">Drop Course</button>
                         </form>

@@ -9,21 +9,37 @@
                 <th>Submission ID</th>
                 <th>Student ID</th>
                 <th>Submitted At</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for submission in submissions %}
+            {% for submission, grade in submissions %}
             <tr>
                 <td>{{ submission.submissionID }}</td>
                 <td>{{ submission.studID }}</td>
-                <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ submission.submittedat.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 <td>
-                    <a href="{{ url_for('professor.download_submission', submissionID=submission.submissionID) }}" class="btn btn-primary btn-sm">Download</a>
+                    {% if grade %}
+                        <span class="badge bg-success">Marked (Grade: {{ grade.grade }})</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="#" class="btn btn-primary btn-sm">Download</a>
+                    {% if not grade %}
+                    <a href="{{ url_for('professor.mark_submission', submissionID=submission.submissionID) }}" class="btn btn-warning btn-sm">Mark</a>
+                    {% else %}
+                    <span class="text-muted">Marked</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="{{ url_for('professor.view_courses') }}" class="btn btn-secondary mt-3">Back to Courses</a>
+
 </div>
 {% endblock %}
+

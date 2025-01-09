@@ -8,7 +8,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if session.get('user_role') != 'Admin': 
             flash('Unauthorized access! Admins only.', 'danger')
-            return redirect(url_for('main.index')) 
+            return redirect(url_for('main.profile')) 
         return f(*args, **kwargs)
     return decorated_function
 
@@ -231,6 +231,12 @@ def add_department():
         name = request.form['name']
         location = request.form['location']
         contactInfo = request.form['contactInfo']
+        
+        existing_department = Department.query.filter_by(name=name).first()
+        if existing_department:
+            flash('department already exists. Please use a unique department.', 'danger')
+            return redirect(url_for('admin.add_department'))
+            
 
         new_department = Department(departmentID=departmentID, name=name, location=location, contactInfo=contactInfo)
         db.session.add(new_department)

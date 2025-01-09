@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Mark Submission for {{ submission.submissionID }}</h1>
+
+    <div class="card shadow p-4">
+        <h4>Submission Details</h4>
+        <p><strong>Student ID:</strong> {{ submission.studID }}</p>
+        <p><strong>Exam Type:</strong> {{ submission.exam.examType }}</p>
+        <p><strong>Submitted At:</strong> {{ submission.submittedat.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    </div>
+
+    <form method="POST" class="mt-4">
+        <!-- Grade -->
+        <div class="mb-3">
+            <label for="grade" class="form-label">Grade</label>
+            <input type="number" class="form-control" id="grade" name="grade" step="0.01" min="0" placeholder="Enter Grade" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100">Submit Grade</button>
+        <a href="{{ url_for('professor.view_submissions', examID=submission.examID) }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

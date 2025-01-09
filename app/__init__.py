@@ -12,7 +12,7 @@ def create_app():
     app.config.from_object('config.Config')
     
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'submissions')
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'submissions')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     # Initialize the database connection

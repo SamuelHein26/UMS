@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Marks for {{ grade[1].examType }}</h1>
+
+    <div class="card shadow p-4">
+        <h4>Exam Details</h4>
+        <p><strong>Course:</strong> {{ grade[1].course.courseName }} ({{ grade[1].courseID }})</p>
+        <p><strong>Exam Type:</strong> {{ grade[1].examType }}</p>
+        <p><strong>Date:</strong> {{ grade[1].date.strftime('%Y-%m-%d') }}</p>
+
+        <hr>
+
+        <h4>Grade Details</h4>
+        <p><strong>Grade:</strong> {{ grade[0].grade }}</p>
+        
+        {% if grade[0].grade >= 40 %}
+            <p><strong>Status:</strong> <span class="text-success">Pass</span></p>
+        {% else %}
+            <p><strong>Status:</strong> <span class="text-danger">Fail</span></p>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('student.enrolled_courses') }}" class="btn btn-secondary mt-3">Back to Courses</a>
+</div>
+{% endblock %}

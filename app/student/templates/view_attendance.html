@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Attendance Records for Course {{ courseID }}</h1>
+
+    <div class="mb-4">
+        <h4>Attendance Summary</h4>
+        <p><strong>Total Classes:</strong> {{ total_classes }}</p>
+        <p><strong>Classes Attended:</strong> {{ attended_classes }}</p>
+        <p><strong>Attendance Percentage:</strong> {{ attendance_percentage }}%</p>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    {% if record.status %}
+                        <span class="badge bg-success">Present</span>
+                    {% else %}
+                        <span class="badge bg-danger">Absent</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('student.enrolled_courses') }}" class="btn btn-secondary mt-3">Back to Courses</a>
+</div>
+{% endblock %}

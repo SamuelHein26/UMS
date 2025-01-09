@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center p-4">
+    <div class="card p-4 shadow" style="width: 50rem;">
+        <div class="container mt-2">
+            <h1 class="text-center mb-4">Mark Attendance for {{ course.courseName }}</h1>
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ current_date }}" required>
+                </div>
+
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Present</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        <tr>
+                            <td>{{ enrollment.studID }}</td>
+                            <td class="text-center">
+                                <input type="checkbox" name="present" class="form-check-input" style="width: 30px; height: 30px;" value="{{ enrollment.studID }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <button type="submit" class="btn btn-primary w-100">Submit Attendance</button>
+                <a href="{{ url_for('professor.view_courses') }}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>  
+</div>  
+{% endblock %}
