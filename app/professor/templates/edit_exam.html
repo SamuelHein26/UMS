@@ -7,7 +7,6 @@
             <h1 class="text-center mb-4">Edit Exam ({{ exam.courseID }})</h1>
 
             <form method="POST">
-                <!-- Exam Type -->
                 <div class="mb-3">
                     <label for="examType" class="form-label">Exam Type</label>
                     <select id="examType" name="examType" class="form-select" required>
@@ -15,26 +14,18 @@
                         <option value="Written" {% if exam.examType == 'Written' %}selected{% endif %}>Written</option>
                     </select>
                 </div>
-
-                <!-- Location -->
                 <div class="mb-3">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control" id="location" name="location" value="{{ exam.location }}" required>
                 </div>
-
-                <!-- Date -->
                 <div class="mb-3">
                     <label for="date" class="form-label">Date & Time</label>
                     <input type="datetime-local" class="form-control" id="date" name="date" value="{{ exam.date.strftime('%Y-%m-%dT%H:%M') }}" required>
                 </div>
-
-                <!-- Duration -->
                 <div class="mb-3">
                     <label for="duration" class="form-label">Duration (minutes)</label>
                     <input type="number" class="form-control" id="duration" name="duration" value="{{ exam.duration }}" min="0" required>
                 </div>
-
-                <!-- Max Marks -->
                 <div class="mb-3">
                     <label for="maxMarks" class="form-label">Max Marks</label>
                     <input type="number" class="form-control" id="maxMarks" name="maxMarks" value="{{ exam.maxMarks }}" step="0.01" min="0" required>

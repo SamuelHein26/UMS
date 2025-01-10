@@ -6,21 +6,15 @@
             <h1 class="mb-4 text-center">Edit User</h1>
             <form action="{{ url_for('admin.edit_user', person_id=user.person_id) }}" method="POST">
                 <div class="row">
-                    <!-- Left Column -->
                     <div class="col-md-6">
-                        <!-- Person ID (readonly) -->
                         <div class="mb-3">
                             <label for="person_id" class="form-label">User ID</label>
                             <input type="text" class="form-control" id="person_id" name="person_id" value="{{ user.person_id }}" readonly>
                         </div>
-
-                        <!-- Name -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
                         </div>
-
-                        <!-- Role -->
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
                             <select class="form-select" id="role" name="role" required>
@@ -30,17 +24,12 @@
                                 <option value="User" {% if user.role == 'User' %}selected{% endif %}>User</option>
                             </select>
                         </div>
-
-                        <!-- Age -->
                         <div class="mb-3">
                             <label for="age" class="form-label">Age</label>
                             <input type="number" class="form-control" id="age" name="age" value="{{ user.age }}">
                         </div>
                     </div>
-
-                    <!-- Right Column -->
                     <div class="col-md-6">
-                        <!-- Gender -->
                         <div class="mb-3">
                             <label for="gender" class="form-label">Gender</label>
                             <select class="form-select" id="gender" name="gender">
@@ -52,14 +41,10 @@
                                 </option>
                             </select>
                         </div>
-
-                        <!-- Phone Number -->
                         <div class="mb-3">
                             <label for="phone_no" class="form-label">Phone Number</label>
                             <input type="text" class="form-control" id="phone_no" name="phone_no" value="{{ user.phone_no }}">
                         </div>
-
-                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>

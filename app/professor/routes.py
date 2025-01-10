@@ -74,7 +74,6 @@ def create_exam(courseID):
 @professor.route('/exams/edit/<int:examID>', methods=['GET', 'POST'])
 @professor_required
 def edit_exam(examID):
-    # Query the exam by its ID
     exam = Exam.query.get_or_404(examID)
 
     # Handle form submission
@@ -85,7 +84,6 @@ def edit_exam(examID):
         duration = int(request.form['duration'])
         maxMarks = float(request.form['maxMarks'])
 
-        # Update exam fields
         exam.examType = examType
         exam.location = location
         exam.date = date
@@ -106,7 +104,6 @@ def edit_exam(examID):
 @professor.route('/exams/delete/<int:examID>', methods=['POST'])
 @professor_required
 def delete_exam(examID):
-    # Query the exam by primary key
     exam = Exam.query.get_or_404(examID)
 
     try:
@@ -142,7 +139,7 @@ def mark_submission(submissionID):
     exam = Exam.query.get_or_404(submission.examID)
 
     if request.method == 'POST':
-        grade_value = float(request.form['grade'])  # Convert to float
+        grade_value = float(request.form['grade']) 
 
         # Check if a grade already exists for this submission
         grade = Grade.query.filter_by(studID=submission.studID, examID=submission.examID).first()
@@ -178,13 +175,11 @@ def mark_submission(submissionID):
 @professor.route('/courses/<string:courseID>/attendance', methods=['GET', 'POST'])
 @professor_required
 def mark_attendance(courseID):
-    # Query the course
     course = Course.query.get_or_404(courseID)
 
     # Query the professor using session user_id
     professor = Professor.query.filter_by(person_id=session['user_id']).first_or_404()
 
-    # Query enrolled students for the course
     enrollments = Enrollment.query.filter_by(courseID=courseID, status='Active').all()
 
     # Get the current date in 'YYYY-MM-DD' format

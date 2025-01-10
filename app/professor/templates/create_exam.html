@@ -6,7 +6,6 @@
         <div class="container mt-2">
             <h1 class="text-center mb-4">Create Exam/Assignment for {{ course.courseName }}</h1>
             <form method="POST">
-                <!-- Exam Type -->
                 <div class="mb-3">
                     <label for="examType" class="form-label">Exam Type</label>
                     <select id="examType" name="examType" class="form-select" required>
@@ -14,26 +13,18 @@
                         <option value="Assignment">Assignment</option>
                     </select>
                 </div>
-
-                <!-- Date or Deadline -->
                 <div class="mb-3">
                     <label for="date" class="form-label">Date/Deadline</label>
                     <input type="datetime-local" class="form-control" id="date" name="date" required>
                 </div>
-
-                <!-- Maximum Marks -->
                 <div class="mb-3">
                     <label for="maxMarks" class="form-label">Maximum Marks</label>
                     <input type="number" class="form-control" id="maxMarks" name="maxMarks" required>
                 </div>
-
-                <!-- Location (for Written Exams only) -->
                 <div class="mb-3" id="locationField">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control" id="location" name="location" placeholder="Enter location">
                 </div>
-
-                <!-- Duration (for Written Exams only) -->
                 <div class="mb-3" id="durationField">
                     <label for="duration" class="form-label">Duration (in minutes)</label>
                     <input type="number" class="form-control" id="duration" name="duration" placeholder="Enter duration">
